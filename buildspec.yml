@@ -1,0 +1,46 @@
+version: 0.2
+env:
+ variables:
+  NODE_OPTIONS: "--max-old-space-size=8192"
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: latest
+  pre_build:
+    commands:
+      - echo Installing angular cli...
+      - ls -ltr
+      #- npm install --local @angular/cli --force
+      - npm install -g @angular/cli
+      - whoami
+      - npm install --legacy-peer-deps
+      - echo Installing dependency
+ 
+  build:
+    commands:
+      - rm -f package-lock.json
+      - npm i --force #--legacy-peer-deps
+      - ls -ltr node_modules
+      - ls -ltr
+      - pwd
+      - cat package.json
+      - echo Build started on date
+      - echo Compiling the angular code
+      - ng version
+      # - ng build --prod --aot --vendor-chunk --common-chunk --delete-output-path --buildOptimizer
+      - ng build
+ 
+  post_build:
+    commands:
+      - echo Build completed on date
+      - ls -ltr
+      - cd dist/browser/
+# Include only the files required for your application to run.
+# Do not use recursively include artifacts from node_modules directory as it will include unnecessary packages
+# used only for building and testing.
+# ExpressJS apps will need other artifact directories included (bin/, public/,routes/, views/ etc).
+artifacts:
+ files:
+ - '**/*'
+ base-directory: 'dist/browser/'
